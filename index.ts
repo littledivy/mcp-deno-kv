@@ -17,20 +17,28 @@ server
     value: z.any().describe("The value to set in the key-value store"),
   }, async ({ key, value }) => {
     await kv.set(key, value);
+    return { content: [] };
   });
 
 server
   .tool("denokv_get", {
-    key: z.array(z.string()).describe("The key to get from the key-value store"),
+    key: z.array(z.string()).describe(
+      "The key to get from the key-value store",
+    ),
   }, async ({ key }) => {
-    return await kv.get(key);
+    return {
+      content: [{ type: "text", text: await kv.get(key).then(String) }],
+    };
   });
 
 server
   .tool("denokv_delete", {
-    key: z.array(z.string()).describe("The key to delete from the key-value store"),
+    key: z.array(z.string()).describe(
+      "The key to delete from the key-value store",
+    ),
   }, async ({ key }) => {
     await kv.delete(key);
+    return { content: [] };
   });
 
 const transport = new StdioServerTransport();
